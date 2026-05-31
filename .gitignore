@@ -427,3 +427,45 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+# --- JUCE / MusicTeacher specific (appended to VisualStudio template) ---
+
+# JUCE generated files
+JuceLibraryCode/
+Builds/MacOSX/build/
+Builds/LinuxMakefile/build/
+Builds/iOS/build/
+Builds/Android/build/
+
+# vcpkg
+vcpkg_installed/
+vcpkg/buildtrees/
+vcpkg/downloads/
+vcpkg/packages/
+
+# MusicTeacher runtime caches
+*.raw
+*.timemap
+
+# MusicTeacher app deployment directory (per project memory: never delete, contains runtime resources)
+# We do not want to commit it; we just don't want it accidentally cleaned by tooling either.
+x64/Debug/App/
+x64/Release/App/
+
+# Local config and secrets
+.env
+*.local.json
+settings.local.json
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Profiling / logs
+*.log
+timing_*.txt
+
+# Large assets that should live elsewhere (per project memory: lesson_background.mp4 is in MusicTeacher_Transfer)
+resources/lesson_background.mp4
