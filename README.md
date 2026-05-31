@@ -1,129 +1,95 @@
-# MusicTeacher
+# MusicTeacher — Vidlunnya Music
 
-**An open pedagogy engine for adaptive music education.**
+An open-source music-education platform for students who cannot reach a music school in person.
 
-MusicTeacher is a desktop application for music practice. It renders sheet music, plays it back, listens to you play it, and gives you structured, score-aware feedback — so you can practice an instrument without a teacher sitting next to you, and without a subscription.
+Built in C++ on [JUCE](https://juce.com) and the [Lomse](https://github.com/lenmus/lomse) music engraving engine. About 76,000 lines of code grown over three years of solo development at [Vasyl Stefanyk Carpathian National University](https://comp-sc.cnu.edu.ua/), Ivano-Frankivsk, Ukraine.
 
-It is built in C++ on [JUCE](https://juce.com) and the [Lomse](https://github.com/lenmus/lomse) music engraving engine.
-
-> **Status (2026):** MusicTeacher is transitioning from a closed-source project (three years of solo development) to a fully open-source release. The full source code, build instructions, and binary releases for Linux, macOS, and Windows will be published here as the relicensing and cross-platform work lands. See [Roadmap](#roadmap) below.
+**Status (May 2026):** transitioning from a closed-source project to a fully open-source release. The first public source tranches will land during the project funded by the pending NLnet NGI Zero Commons application (June 2026 round). Until then, this repository hosts the project's identity, roadmap, and metadata.
 
 ---
 
-## Why this exists
+## Who this is for
 
-The open-source music software ecosystem covers two of the three layers a learner needs:
+The student we are building for is anyone who cannot reach a music school in person: families that cannot afford private tuition, learners in places without a local music school, displaced students from war-affected areas, adults who never had a chance at formal music education. For this group, the realistic comparison is not EarMaster at €60+ per seat. It is nothing, or YouTube, or paper exercises with no feedback.
 
-| Layer | Open-source state |
-|---|---|
-| **A. Notation engines** — render scores | Excellent: Lomse, VexFlow, LilyPond |
-| **B. Score editors / DAWs** — author scores, play them back | Excellent: MuseScore, Frescobaldi, Ardour, LMMS |
-| **C. Adaptive practice apps** — listen to the learner, give feedback | **Empty.** Every product in this category (Yousician, Simply Piano, Synthesia, Soundslice, Flowkey, Skoove) is closed, proprietary, and usually subscription-only |
-
-MusicTeacher fills Layer C with a free, libre, offline-capable alternative.
+Target level: solid music-school foundations — roughly the level of a Ukrainian *музучилище* or a Polish *szkoła muzyczna*. Below conservatory, well above a hobby app. Works offline, in the student's own language, no subscription.
 
 ---
 
-## What it does (today, in the closed build)
+## What runs today
 
-- Loads and renders MusicXML scores using Lomse, with an OpenGL-accelerated drawing path
-- Background-threaded layout with progressive chunk delivery (large scores stay responsive)
-- Cached pre-rendered score buffers (`.raw`) and time-to-position maps (`.timemap`) for sub-frame-precise cursor synchronisation during playback
-- MIDI input and audio playback
-- Lesson library with structured exercises (currently bundled, English/Ukrainian)
-- Settings UI: voices, MIDI configuration, accuracy thresholds, scoring, humanizer, GPU, language
-
-## What's being added under NLnet funding
-
-This project is the subject of an application to the [NLnet Foundation NGI Zero Commons Fund](https://nlnet.nl/commonsfund/), submitted in the June 2026 round. If funded, the work delivered over the following twelve months will include:
-
-1. **License audit and FOSS migration** of the full codebase (target: GPLv3 for the application, MIT for the embeddable engine library)
-2. **Cross-platform release** — Linux (ALSA / JACK / PipeWire), macOS (CoreAudio), Windows
-3. **Adaptive Practice Engine** — a standalone, MIT-licensed C++ library performing real-time monophonic and polyphonic pitch tracking, onset detection, and rhythm scoring against a MusicXML target, with a stable C API consumable by any third-party music tool
-4. **Open lesson library** — curated, CC-BY-SA progression of exercises (piano, guitar, voice) with structured difficulty metadata
-5. **Upstream contributions to Lomse** — rendering performance patches, accessibility hooks, bug fixes
-6. **Drafted skill-progression metadata schema** for MusicXML, submitted to the W3C Music Notation Community Group
-
-If not funded, the open-source migration still happens — just on a slower, self-funded timeline.
+- OpenGL-accelerated sheet-music rendering with sub-frame-precise playback cursor synchronisation
+- MIDI input with note-by-note accuracy tracking against the score ("Check VT Mode")
+- Piano sampler with ~640 OGG samples covering the keyboard at four velocity layers and both pedal states
+- Humanizer DSP block (sustain-pedal modelling, phrase shaping, intro rubato, coda ritardando, and more)
+- Master EQ and reverb with live spectrum analysis
+- MIDI ↔ MusicXML conversion, VST3 plugin hosting, velocity-curve editor
+- UI translated into Ukrainian, English, and Polish
+- Text-to-speech through sherpa-onnx with Piper neural voice models (ten voices across the three launch languages)
+- A custom lesson scripting language (LessonScript) with built-in localisation
+- Fifteen shipped lessons: four rhythm levels (basics, rests, eighth/sixteenth, syncopation), two melody lessons, one dictation lesson, and eight reading-fundamentals lessons (note names, staff notation, both clefs, octave recognition, full piano)
 
 ---
 
-## Roadmap
+## Screenshot
+
+![MusicTeacher main lesson selection screen](docs/screenshot/main.png)
+
+The Base module of the running application — eight structured reading-fundamentals lessons in classical pedagogical order, with per-lesson progress tracking. Top-level tabs reflect the wider curriculum (Base, Solfège, Piano, Course); Solfège is the curriculum area being filled in during the NLnet-funded project.
+
+---
+
+## What's being added in the NLnet-funded phase
+
+Four work-streams:
+
+1. **Finishing** the existing subsystems — closing the open work in the rendering, MIDI, playback, sampler, and Humanizer paths; bringing the lesson-execution flow to a clean state across the existing 15 lessons.
+2. **Visual and UX design** — lesson card templates, lesson interior layout, navigation and onboarding, accessibility modes (high-contrast, large-text, dyslexia-friendly font, colour-blind safe palette), unified icon set.
+3. **Curriculum gap-filling** — the existing curriculum has no sight-singing track at all, only one dictation lesson, and no separate sight-reading track. The grant pays for the design and validation of a full sight-singing track, a substantial dictation progression, a sight-reading track at music-school level, and translation of new content into the launch languages. Lead consultant: Prof. Dr. Violetta Dutchak, Chair of the Department of Musical Ukrainistics and Folk Instrumental Arts at the same university.
+4. **Systematic testing** — automated regression across rendering, MIDI, and playback paths; LessonScript completion-path tests for every lesson; multi-language UI screenshot diffs; documented manual-test protocol for pilot teachers.
+
+iPad, macOS, and Linux ports are deliberately out of scope for this grant — natural targets for follow-on funding once the Windows release is shipped.
+
+---
+
+## Licence
+
+The project is released under **GPL-3.0** (matches the JUCE-GPL framework path and the LGPL Lomse engine; libsodium and sherpa-onnx are permissively licensed and GPL-compatible). Curriculum content is released under **CC-BY-SA**.
+
+See [LICENSE](LICENSE) for the full text.
+
+---
+
+## Roadmap (NLnet-funded phase)
 
 | Milestone | Target | Status |
 |---|---|---|
-| Public repository established | 2026-06 | ✅ this file |
-| Dependency license audit complete | 2026-08 | ☐ |
-| First public source release (Windows binary + buildable source) | 2026-10 | ☐ |
-| Linux build (Flatpak) | 2026-12 | ☐ |
-| macOS build (signed dmg) | 2027-01 | ☐ |
-| Adaptive Practice Engine v0.1 (monophonic) | 2027-03 | ☐ |
-| Adaptive Practice Engine v0.2 (polyphonic, chord recognition) | 2027-06 | ☐ |
-| Open lesson library v1.0 | 2027-06 | ☐ |
-| 1.0 release | 2027-09 | ☐ |
-
----
-
-## Building from source
-
-> Source is not yet public. Once the license audit and migration land (target 2026-10), this section will document the full build for each platform. Until then, here is the current development toolchain for reference:
-
-- **Compiler**: MSVC 2022 (Windows) — Clang and GCC will be supported after the cross-platform port
-- **Build system**: MSBuild (Visual Studio solution) — CMake migration is planned with the open release
-- **Dependencies**: JUCE, Lomse, FreeType, libpng, zlib, bzip2 (via vcpkg on Windows)
-- **Entry point**: `Source/Main.cpp`, `Source/MainComponent.h`
-
----
-
-## Architecture (high level)
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                         MusicTeacher                              │
-├──────────────────────────────────────────────────────────────────┤
-│  UI (JUCE Components)                                             │
-│    SettingsDialog, ScoreView, lesson playback controls            │
-├──────────────────────────────────────────────────────────────────┤
-│  Score subsystem                                                  │
-│    ScoreViewLoadingMethods    BackgroundLomseRenderer             │
-│    PreRenderManager (cache)   ScoreViewRenderingMethods (paint)   │
-│    CursorManager (uses TimeToXMap directly)                       │
-├──────────────────────────────────────────────────────────────────┤
-│  Lomse engraving engine (LGPL, external)                          │
-├──────────────────────────────────────────────────────────────────┤
-│  Audio + MIDI (JUCE abstraction over WASAPI/ASIO/CoreAudio/ALSA)  │
-├──────────────────────────────────────────────────────────────────┤
-│  [Coming] Adaptive Practice Engine                                │
-│    pitch tracker · onset detector · score-aligned scorer          │
-└──────────────────────────────────────────────────────────────────┘
-```
-
-Two design notes worth knowing:
-
-- **Lomse's graphic model is lazy.** `new_document()` is cheap; layout only happens on the first access to the graphic model. We do that first access on a background thread and stream the resulting render into a cache, so the UI thread never blocks on Lomse layout.
-- **Playback cursor is decoupled from the graphic model.** Once the `TimeToXMap` is built and the pre-rendered buffer is cached, cursor tracking during playback no longer needs the live Lomse graphic model. This is what makes the cursor responsive on large scores.
-
-A full architecture document will be published with the first source release.
-
----
-
-## License
-
-The full project will be released under **GPLv3**, with the standalone Adaptive Practice Engine library released under **MIT** so it can be embedded by other music software regardless of their license.
-
-(Final license selection pending the dependency audit. If a transitive dependency forces a different choice, this README will be updated accordingly.)
+| Public repository established | 2026-05 | done — this file |
+| Dependency licence audit complete; first GPL-3.0 source tranche | 2026-08 | pending |
+| Finishing pass on rendering and MIDI paths; visual design system v1 | 2026-08 | pending |
+| First half of new curriculum (sight-singing + dictation v1); full visual design system shipped | 2026-11 | pending |
+| Second half of curriculum (sight-reading + dictation expansion); LessonScript completion-path tests | 2027-02 | pending |
+| Full 1.0 Windows release; full curriculum public under CC-BY-SA; case-study report | 2027-05 | pending |
 
 ---
 
 ## Contributing
 
-Source is not yet open, so we are not yet accepting code contributions. The fastest ways to help right now:
+The source is not yet public, so we cannot yet accept code contributions. The fastest ways to help right now:
 
-- **Star and watch** the repository to signal interest — this materially helps the NLnet application
-- **Open an issue** if you are a music teacher and want to describe a feature that would make this useful in your lessons — pedagogical input is the rarest and most valuable kind of contribution
-- **Reach out** if you are interested in being a music-domain consultant on the funded work (piano, guitar, voice pedagogy especially)
+- **Star and watch** the repository — community signal is a real input into the grant decision.
+- **Open an issue** if you are a music teacher and have a feature request that would make this useful in your lessons, or if you are a learner who would like a particular kind of practice support.
+- **Reach out** if you teach at conservatory or music-училище level and are interested in being a music-domain consultant on the funded curriculum work: musicneutrino@gmail.com.
 
-Contact: musicneutrino@gmail.com
+Once the source is open (target: August–October 2026), normal open-source contribution practices apply. A full `CONTRIBUTING.md` lives in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## Contact
+
+- **Maintainer:** Viktor Rovinkyi — Associate Professor (docent), Department of Computer Science and Information Systems, Vasyl Stefanyk Carpathian National University. Faculty page: https://comp-sc.cnu.edu.ua/staff/viktor-rovinskyi/
+- **Email:** musicneutrino@gmail.com
+- **Project lead:** Vidlunnya Music (Ukrainian *відлуння*, "echo") — sole-developer entity, registration as ФОП / NGO in progress.
 
 ---
 
@@ -131,9 +97,10 @@ Contact: musicneutrino@gmail.com
 
 - [Lomse](https://github.com/lenmus/lomse) by Cecilio Salmeron — the music engraving engine MusicTeacher renders on top of
 - [JUCE](https://juce.com) — the C++ application framework
-- The W3C Music Notation Community Group for [MusicXML](https://www.musicxml.com/)
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) and [Piper](https://github.com/rhasspy/piper) — the neural text-to-speech stack
+- The [W3C Music Notation Community Group](https://www.w3.org/community/music-notation/) for the MusicXML standard
 - (Pending) NLnet Foundation and the European Commission's Next Generation Internet initiative
 
 ---
 
-*MusicTeacher is developed in Ukraine.*
+*MusicTeacher / Vidlunnya Music is developed in Ukraine.*
